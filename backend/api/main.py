@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, Response # Import Response
+from fastapi.responses import StreamingResponse
 from rembg import remove
 from PIL import Image
 import io
@@ -21,15 +22,18 @@ def health():
 @app.post("/remove-bg")
 async def remove_bg(file: UploadFile = File(...)):
         image_bytes = await file.read()
-        image = Image.open(io.BytesIO(image_bytes))
+        image = Image.open(io.BytesIO(image_bytes)).convert("RGBA")
 
         output = remove(image)
-        return Response(content=output, media_type="image/png")
-
-"""         buffer = io.BytesIO()
+        buffer = io.BytesIO()
         output.save(buffer, format="PNG")
         buffer.seek(0)
+        return StreamingResponse(buffer, media_type="image/png")
+       
 
-        return buffer.getvalue() """
-        # Save the output image to a bytes buffer
-        
+"""        
+
+        return buffer.getvalue() 
+        return Response(content=output, media_type="image/png")"""
+        # Save the output image to a bytes buffer    
+             
