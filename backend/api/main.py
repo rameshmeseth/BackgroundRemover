@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, Response # Import Response
+from fastapi.middleware.cors import CORSMiddleware # 1. Import Middleware
 from fastapi.responses import StreamingResponse
 from rembg import remove
 from PIL import Image
@@ -15,6 +16,13 @@ The result is saved as a PNG with transparency
 The image is returned to the client
  """
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],      # Allows all sites (useful for local development)
+    allow_credentials=True,
+    allow_methods=["*"],      # Allows all methods (GET, POST, etc.)
+    allow_headers=["*"],      # Allows all headers
+)
 
 @app.get("/health")
 def health():
